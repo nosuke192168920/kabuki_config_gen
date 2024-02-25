@@ -23,14 +23,6 @@ extern int optind, opterr, optopt;
 
 #define CODE_LEN 11
 
-unsigned char title_jpn_utf8[][128] = {
-#include "title_jpn_utf8.txt"
-};
-
-unsigned char title_jpn_sjis[][128] = {
-#include "title_jpn_sjis.txt"
-};
-
 #define NAME "kabuki_config_gen"
 #define VERSION "1.0"
 #define CONFIG_FILE "config.txt"
@@ -94,6 +86,21 @@ enum game_id {
       mbombrd,
       _base_id_num
 };
+
+typedef struct title_jpn {
+    enum game_id id;
+    unsigned char title[128];
+} t_title_jpn;
+
+
+t_title_jpn title_jpn[] = {
+#ifdef USE_SJIS
+# include "title_jpn_sjis.txt"
+#else
+# include "title_jpn_utf8.txt"
+#endif
+};
+
 
 typedef struct kabuki_title_info {
     char long_name[64];
@@ -275,20 +282,35 @@ search_title_and_get_value(char *line, t_kabuki_title_info *title_info)
     return -1;
 }
 
+unsigned char *
+get_jp_title(int id)
+{
+    int title_num = sizeof(title_jpn) / sizeof(title_jpn[0]);
+
+    for (int i = 0; i < title_num; i++) {
+        if (title_jpn[i].id == id) {
+            return title_jpn[i].title;
+        }
+    }
+    return NULL;
+}
+
 
 int
-title_selection(int ncodes, int use_sjis)
+title_selection(int ncodes)
 {
     int in;
 
     for (int i = 0; i < ncodes; i++) {
+        unsigned char *jp;
         if (kabuki_games[i].valid == 1) {
             printf("[%2d]", i);
         } else {
             printf("[**]");
         }
+        jp = get_jp_title(kabuki_games[i].id);
         printf(" %s (%s)\n", kabuki_games[i].long_name, 
-               use_sjis ? title_jpn_sjis[kabuki_games[i].id] : title_jpn_utf8[kabuki_games[i].id]);
+               jp != NULL ? jp : (unsigned char *)"");
     }
     printf("--------------------------------------------------------------------------------\n");
     printf("Select game title: ");
@@ -302,20 +324,12 @@ title_selection(int ncodes, int use_sjis)
     return -1;
 }
 
-#ifdef __MINGW32__
-# define USE_SJIS_DEFAULT 1
-#else
-# define USE_SJIS_DEFAULT 0
-#endif
-
 void
 usage(char **argv)
 {
     fprintf(stderr, "Usage: %s [OPTION]\n", argv[0]);
     fprintf(stderr, "Options:\n");
     fprintf(stderr, "  -o FILE    change output file name from %s\n", CONFIG_FILE);
-    fprintf(stderr, "  -s         output Japanese character in SJIS code\n");
-    fprintf(stderr, "  -u         output Japanese character in UTF8 code\n");
     fprintf(stderr, "  -v         show tool version\n");   
     fprintf(stderr, "  -h         show this message\n");   
 }
@@ -330,22 +344,15 @@ main(int argc, char *argv[])
     int ret = -1;
     char line[1024];
     int ncodes = sizeof(kabuki_games) / sizeof(kabuki_games[0]);
-    int use_sjis = USE_SJIS_DEFAULT;
 
     int opt;
 
 
 
-    while ((opt = getopt(argc, argv, "o:suvh")) != -1) {
+    while ((opt = getopt(argc, argv, "o:vh")) != -1) {
         switch (opt) {
         case 'o':
             outfile = optarg;
-            break;
-        case 's':
-            use_sjis = 1;
-            break;
-        case 'u':
-            use_sjis = 0;
             break;
         case 'v':
             ret = 0;
@@ -426,11 +433,10 @@ main(int argc, char *argv[])
     fclose(fp);
 #endif    
 
-    ret = title_selection(ncodes, use_sjis);
+    ret = title_selection(ncodes);
 
     if (ret >= 0) {
-        unsigned char *title_jpn = use_sjis ? title_jpn_sjis[kabuki_games[ret].id]
-                                   : title_jpn_utf8[kabuki_games[ret].id];
+        unsigned char *title_jpn = get_jp_title(kabuki_games[ret].id);
         printf("Generated code for \"%s\" (%s)\n", kabuki_games[ret].long_name, title_jpn);
         
         fp = fopen(outfile, "wb");
