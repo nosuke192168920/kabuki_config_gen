@@ -21,6 +21,10 @@ extern int optind, opterr, optopt;
 #include <getopt.h>
 
 
+#ifdef __MINGW32__
+#include <windows.h>
+#endif
+
 #define CODE_LEN 11
 
 #define NAME "kabuki_config_gen"
@@ -335,24 +339,57 @@ usage(char **argv)
 }
 
 
+#ifdef __MINGW32__
+int cp_org_valid = 0;
+UINT cp_org;
+#endif
+
+#ifdef __MINGW32__
+BOOL WINAPI ConsoleHandler(DWORD dwType)
+{
+    switch(dwType) {
+    case CTRL_C_EVENT:
+        if (cp_org_valid) {
+            SetConsoleOutputCP(cp_org);
+        }
+        return FALSE;
+        break;
+    case CTRL_BREAK_EVENT:
+        if (cp_org_valid) {
+            SetConsoleOutputCP(cp_org);
+        }
+        return FALSE;
+        break;
+    default:
+        
+    }
+    return TRUE;
+}
+#endif
 
 int
 main(int argc, char *argv[])
 {
     FILE *fp;
-    char *outfile = CONFIG_FILE;
+    char *configfile = CONFIG_FILE;
     int ret = -1;
     char line[1024];
     int ncodes = sizeof(kabuki_games) / sizeof(kabuki_games[0]);
 
     int opt;
 
+#ifdef __MINGW32__
+    cp_org = GetConsoleOutputCP();
+    cp_org_valid = 1;
+    SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler,TRUE);
+    SetConsoleOutputCP(65001);
+#endif
 
 
     while ((opt = getopt(argc, argv, "o:vh")) != -1) {
         switch (opt) {
         case 'o':
-            outfile = optarg;
+            configfile = optarg;
             break;
         case 'v':
             ret = 0;
@@ -437,12 +474,14 @@ main(int argc, char *argv[])
 
     if (ret >= 0) {
         unsigned char *title_jpn = get_jp_title(kabuki_games[ret].id);
-        printf("Generated code for \"%s\" (%s)\n", kabuki_games[ret].long_name, title_jpn);
+        printf("Generated config \"%s\" file for \n"
+               "\"%s\" (%s)\n", configfile,
+               kabuki_games[ret].long_name, title_jpn);
         
-        fp = fopen(outfile, "wb");
+        fp = fopen(configfile, "wb");
         if (fp == NULL) {
             perror("fopen");
-            fprintf(stderr, "Output file \"%s\" open failed\n", outfile);
+            fprintf(stderr, "Config file \"%s\" open failed\n", configfile);
             ret = -1;
             goto FIN;
         }
@@ -480,6 +519,10 @@ main(int argc, char *argv[])
     printf("Press enter to exit.");
     fflush(stdout);
     getchar();
+
+#ifdef __MINGW32__
+    SetConsoleOutputCP(cp_org);
+#endif
 
 
     return ret;
