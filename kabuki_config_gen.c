@@ -342,18 +342,11 @@ usage(char **argv)
 #ifdef __MINGW32__
 int cp_org_valid = 0;
 UINT cp_org;
-#endif
 
-#ifdef __MINGW32__
-BOOL WINAPI ConsoleHandler(DWORD dwType)
+BOOL WINAPI CtrlHandler(DWORD dwCtrlType)
 {
-    switch(dwType) {
+    switch(dwCtrlType) {
     case CTRL_C_EVENT:
-        if (cp_org_valid) {
-            SetConsoleOutputCP(cp_org);
-        }
-        return FALSE;
-        break;
     case CTRL_BREAK_EVENT:
         if (cp_org_valid) {
             SetConsoleOutputCP(cp_org);
@@ -361,7 +354,7 @@ BOOL WINAPI ConsoleHandler(DWORD dwType)
         return FALSE;
         break;
     default:
-        
+        break;
     }
     return TRUE;
 }
@@ -381,7 +374,7 @@ main(int argc, char *argv[])
 #ifdef __MINGW32__
     cp_org = GetConsoleOutputCP();
     cp_org_valid = 1;
-    SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler,TRUE);
+    SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
     SetConsoleOutputCP(65001);
 #endif
 
