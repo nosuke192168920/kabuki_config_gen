@@ -63,9 +63,9 @@ convert_code(uint8_t *dst, uint32_t key1, uint32_t key2, uint16_t addr, uint8_t 
     code[8] = xor;
 }
 
-#define CFG_8BIT     0xF000
-#define CFG_SPANG    0x7000
-#define CFG_CPS1     0xFF00
+#define CFG_RAW_RAM      0xF000 
+#define CFG_HASH_RAM     0x7000 // need to use this when game executes code located on RAM
+#define CFG_RAW_BANK_RAM 0xFF00 // banks are not bit-shuffled (for CPS1.5)
 
 
 enum game_id {
@@ -122,27 +122,27 @@ typedef struct kabuki_title_info {
 } t_kabuki_title_info;
 
 t_kabuki_title_info kabuki_games[] = {
-// long name,                                  short_name, id,       master,   swap, swap2, addr, xor, mask,      code, valid
-  {"Pang / Buster Bros / Pomping World",       "pang",     pang,     pang,     0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Super Pang (World)",                       "spang",    spang,    spang,    0,    0,     0,    0,   CFG_SPANG, {0},  0},
-  {"Super Pang (Japan)",                       "spangj",   spangj,   spangj,   0,    0,     0,    0,   CFG_SPANG, {0},  0},
-  {"Super Buster Bros",                        "sbbros",   sbbros,   sbbros,   0,    0,     0,    0,   CFG_SPANG, {0},  0},
-  {"Dokaben",                                  "dokaben",  dokaben,  mgakuen2, 0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Dokaben 2",                                "dokaben2", dokaben2, mgakuen2, 0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Capcom Baseball",                          "cbasebal", cbasebal, pang,     0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Capcom World",                             "cworld",   cworld,   cworld,   0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Adventure Quiz 2 Hatena ? no Dai-Bouken",  "hatena",   hatena,   hatena,   0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Quiz Tonosama no Yabou",                   "qtono1",   qtono1,   qtono1,   0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Quiz Sangokushi",                          "qsangoku", qsangoku, qsangoku, 0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Block Block",                              "block",    block,    block,    0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Mahjong Gakuen 2 Gakuen-chou no Fukushuu", "mgakuen2", mgakuen2, mgakuen2, 0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Porker Ladies",                            "pkladies", pkladies, mgakuen2, 0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Super Marukin-Ban",                        "marukin",  marukin,  marukin,  0,    0,     0,    0,   CFG_8BIT,  {0},  0},
-  {"Warriors of Fate",                         "wof",      wof,      wof,      0,    0,     0,    0,   CFG_CPS1,  {0},  0},
-  {"Cadillacs and Dinosaurs",                  "dino",     dino,     dino,     0,    0,     0,    0,   CFG_CPS1,  {0},  0},
-  {"Punisher",                                 "punisher", punisher, punisher, 0,    0,     0,    0,   CFG_CPS1,  {0},  0},
-  {"Slam Masters",                             "slammast", slammast, slammast, 0,    0,     0,    0,   CFG_CPS1,  {0},  0},
-  {"Muscle Bomber Duo",                        "mbombrd",  mbombrd,  slammast, 0,    0,     0,    0,   CFG_CPS1,  {0},  0}
+// long name,                                  short_name, id,       master,   swap, swap2, addr, xor, cfg,              code, valid
+  {"Pang / Buster Bros / Pomping World",       "pang",     pang,     pang,     0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Super Pang (World)",                       "spang",    spang,    spang,    0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
+  {"Super Pang (Japan)",                       "spangj",   spangj,   spangj,   0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
+  {"Super Buster Bros",                        "sbbros",   sbbros,   sbbros,   0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
+  {"Dokaben",                                  "dokaben",  dokaben,  mgakuen2, 0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Dokaben 2",                                "dokaben2", dokaben2, mgakuen2, 0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Capcom Baseball",                          "cbasebal", cbasebal, pang,     0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Capcom World",                             "cworld",   cworld,   cworld,   0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Adventure Quiz 2 Hatena ? no Dai-Bouken",  "hatena",   hatena,   hatena,   0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Quiz Tonosama no Yabou",                   "qtono1",   qtono1,   qtono1,   0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Quiz Sangokushi",                          "qsangoku", qsangoku, qsangoku, 0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Block Block",                              "block",    block,    block,    0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Mahjong Gakuen 2 Gakuen-chou no Fukushuu", "mgakuen2", mgakuen2, mgakuen2, 0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
+  {"Porker Ladies",                            "pkladies", pkladies, mgakuen2, 0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
+  {"Super Marukin-Ban",                        "marukin",  marukin,  marukin,  0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
+  {"Warriors of Fate",                         "wof",      wof,      wof,      0,    0,     0,    0,   CFG_RAW_BANK_RAM, {0},  0},
+  {"Cadillacs and Dinosaurs",                  "dino",     dino,     dino,     0,    0,     0,    0,   CFG_RAW_BANK_RAM, {0},  0},
+  {"Punisher",                                 "punisher", punisher, punisher, 0,    0,     0,    0,   CFG_RAW_BANK_RAM, {0},  0},
+  {"Slam Masters",                             "slammast", slammast, slammast, 0,    0,     0,    0,   CFG_RAW_BANK_RAM, {0},  0},
+  {"Muscle Bomber Duo",                        "mbombrd",  mbombrd,  slammast, 0,    0,     0,    0,   CFG_RAW_BANK_RAM, {0},  0}
 };
 
 
