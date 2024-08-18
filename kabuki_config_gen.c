@@ -27,7 +27,7 @@ extern int optind, opterr, optopt;
 
 #define CODE_LEN 11
 
-#define NAME "kabuki_config_gen"
+#define COPY "2024 nosuke <sasugaanija@gmail.com>"
 #define VERSION "1.0"
 #define CONFIG_FILE "config.txt"
 #define CONFIG_FILE_ALL "config_all.txt" // for DEBUG
@@ -127,14 +127,14 @@ t_kabuki_title_info kabuki_games[] = {
   {"Super Pang (World)",                       "spang",    spang,    spang,    0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
   {"Super Pang (Japan)",                       "spangj",   spangj,   spangj,   0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
   {"Super Buster Bros",                        "sbbros",   sbbros,   sbbros,   0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
-  {"Dokaben",                                  "dokaben",  dokaben,  mgakuen2, 0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
-  {"Dokaben 2",                                "dokaben2", dokaben2, mgakuen2, 0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
-  {"Capcom Baseball",                          "cbasebal", cbasebal, pang,     0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
-  {"Capcom World",                             "cworld",   cworld,   cworld,   0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
-  {"Adventure Quiz 2 Hatena ? no Dai-Bouken",  "hatena",   hatena,   hatena,   0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
-  {"Quiz Tonosama no Yabou",                   "qtono1",   qtono1,   qtono1,   0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
-  {"Quiz Sangokushi",                          "qsangoku", qsangoku, qsangoku, 0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
-  {"Block Block",                              "block",    block,    block,    0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0},
+  {"Dokaben",                                  "dokaben",  dokaben,  mgakuen2, 0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0}, // KABUKI Desuicider configuration uses HASH_RAM mode
+  {"Dokaben 2",                                "dokaben2", dokaben2, mgakuen2, 0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0}, // Ditto
+  {"Capcom Baseball",                          "cbasebal", cbasebal, pang,     0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0}, // Ditto
+  {"Capcom World",                             "cworld",   cworld,   cworld,   0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0}, // Ditto
+  {"Adventure Quiz 2 Hatena ? no Dai-Bouken",  "hatena",   hatena,   hatena,   0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0}, // Ditto
+  {"Quiz Tonosama no Yabou",                   "qtono1",   qtono1,   qtono1,   0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0}, // Ditto
+  {"Quiz Sangokushi",                          "qsangoku", qsangoku, qsangoku, 0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0}, // Ditto
+  {"Block Block",                              "block",    block,    block,    0,    0,     0,    0,   CFG_RAW_RAM,      {0},  0}, // Ditto
   {"Mahjong Gakuen 2 Gakuen-chou no Fukushuu", "mgakuen2", mgakuen2, mgakuen2, 0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
   {"Porker Ladies",                            "pkladies", pkladies, mgakuen2, 0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
   {"Super Marukin-Ban",                        "marukin",  marukin,  marukin,  0,    0,     0,    0,   CFG_HASH_RAM,     {0},  0},
@@ -330,6 +330,14 @@ title_selection(int ncodes)
 }
 
 void
+version()
+{
+    printf("CPicSK configuration generator (ver %s)\n", VERSION);
+    printf("Copyright (c) %s\n", COPY);
+}
+
+
+void
 usage(char **argv)
 {
     fprintf(stderr, "Usage: %s [OPTION]\n", argv[0]);
@@ -387,7 +395,7 @@ main(int argc, char *argv[])
             break;
         case 'v':
             ret = 0;
-            printf("%s %s\n", NAME, VERSION);
+            version();
             goto FIN;
         case 'h':
             usage(argv);
