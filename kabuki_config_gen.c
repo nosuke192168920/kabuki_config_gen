@@ -332,7 +332,7 @@ title_selection(int ncodes)
 void
 version()
 {
-    printf("CPicSK configuration generator (ver %s)\n", VERSION);
+    printf("KABUKI configuration generator (ver %s)\n", VERSION);
     printf("Copyright (c) %s\n", COPY);
 }
 
