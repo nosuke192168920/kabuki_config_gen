@@ -28,7 +28,7 @@ extern int optind, opterr, optopt;
 #define CODE_LEN 11
 
 #define COPY "2024 nosuke <sasugaanija@gmail.com>"
-#define VERSION "1.0"
+#define VERSION "1.01"
 #define CONFIG_FILE "config.txt"
 #define CONFIG_FILE_ALL "config_all.txt" // for DEBUG
 //#define DEBUG
