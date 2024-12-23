@@ -17,7 +17,7 @@ kabuki_config_gen: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 
 
-kabuki_config_gen.c: title_jpn_utf8.txt title_jpn_sjis.txt
+kabuki_config_gen.o: title_jpn_utf8.txt title_jpn_sjis.txt
 
 
 clean:
